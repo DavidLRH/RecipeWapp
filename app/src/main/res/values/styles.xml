@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Base application theme -->
+    <style name="Theme.RecipeWapp" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here if needed -->
+        <!-- Example customization: -->
+        <!-- <item name="colorPrimary">@color/primaryColor</item> -->
+    </style>
+</resources>
