@@ -3,12 +3,13 @@ package com.example.recipewapp.repository
 import android.content.Context
 import com.example.recipewapp.model.AppDatabase
 import com.example.recipewapp.model.Recipe
+import javax.inject.Inject
 
-class RecipeController(context: Context) {
-    private val repository = RecipeRepository(AppDatabase.getDatabase(context))
+class RecipeController @Inject constructor(
+    private val repository: RecipeRepository) {
 
-    suspend fun getRecipes(ingredient1: String, ingredient2: String): List<Recipe> {
-        return repository.fetchRecipes(ingredient1, ingredient2)
+    suspend fun getRecipes(ingredient: String): List<Recipe> {
+        return repository.fetchRecipes(ingredient)
     }
 
     suspend fun getCachedRecipes(): List<Recipe> {
