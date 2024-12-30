@@ -31,6 +31,10 @@ class RecipeSearchViewModel @Inject constructor(
         }
     }
 
+    fun fetchFavourites() {
+        TODO("Not yet implemented")
+    }
+
     init {
         println("viewmodel started")
     }

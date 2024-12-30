@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.recipewapp.view.RecipeSearchScreen
 import com.example.recipewapp.view.RecipeSearchViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.recipewapp.view.FavouriteRecipesScreen
 
 @Composable
 fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()) {
@@ -16,10 +17,13 @@ fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()) {
         composable(Screen.RecipeSearchScreen.route) {
             RecipeSearchScreen(navController, viewModel)
         }
-
+        composable(Screen.FavouriteRecipesScreen.route) {
+            FavouriteRecipesScreen(navController, viewModel)
+        }
     }
 }
 
 sealed class Screen(val route: String) {
     object RecipeSearchScreen : Screen("search")
+    object FavouriteRecipesScreen : Screen("favourites")
 }
