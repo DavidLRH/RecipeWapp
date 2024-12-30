@@ -63,6 +63,7 @@ dependencies {
     // Room Dependencies
     implementation("androidx.room:room-runtime:2.6.1")
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.androidx.espresso.core)
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
@@ -83,6 +84,7 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
     implementation("io.coil-kt.coil3:coil-compose:3.0.4")
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.4")
+    implementation ("androidx.compose.material:material-icons-extended:1.3.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

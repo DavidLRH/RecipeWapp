@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
@@ -37,8 +38,8 @@ import com.example.recipewapp.model.Recipe
 @Composable
 fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchViewModel) {
     val recipes by viewModel.recipes.collectAsState()
-    var ingredients by remember { mutableStateOf("") }
-    var checked by remember { mutableStateOf(false) }
+    val maxIngredients = 5
+    var ingredientsList by remember { mutableStateOf(listOf("", "")) }
 
     Scaffold {
         Column(
@@ -47,25 +48,61 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
                 .padding(it)
         ) {
 
-            TextField(
-                value = ingredients,
-                onValueChange = { ingredients = it },
-                label = { Text("chicken, pasta,...") }
-            )
-
-            Row {
-                Checkbox(
-                    checked = true,
-                    onCheckedChange = {checked = it}
-                )
-                Text("ignore common pantry items")
+            ingredientsList.forEachIndexed { index, ingredient ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                ) {
+                    TextField(
+                        value = ingredient,
+                        onValueChange = { newValue ->
+                            ingredientsList = ingredientsList.toMutableList().apply {
+                                this[index] = newValue
+                            }
+                        },
+                        label = { Text("Ingredient ${index + 1}") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    if (ingredientsList.size > 1) {
+                        Button(onClick = {
+                            ingredientsList = ingredientsList.toMutableList().apply {
+                                removeAt(index)
+                            }
+                        }) {
+                            Text("-")
+                        }
+                    }
+                }
             }
 
-            Button(onClick = { viewModel.fetchRecipes(ingredients) }) {
-                Text("Search recipes")
+            if (ingredientsList.size < maxIngredients) {
+                Button(
+                    onClick = {
+                        ingredientsList = ingredientsList.toMutableList().apply {
+                            add("")
+                        }
+                    },
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text("+ Add Ingredient")
+                }
             }
 
-
+            Button(
+                onClick = {
+                    val ingredientsString = ingredientsList.filter { it.isNotBlank() }.joinToString(",")
+                    viewModel.fetchRecipes(ingredientsString)
+                },
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .fillMaxWidth()
+            ) {
+                Text("Search Recipes")
+            }
 
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
@@ -79,6 +116,7 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
         }
     }
 }
+
 
 @Composable
 fun RecipeItem(recipe: Recipe) {

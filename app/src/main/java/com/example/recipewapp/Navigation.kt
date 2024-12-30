@@ -9,14 +9,14 @@ import com.example.recipewapp.view.RecipeSearchViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 
 @Composable
-fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()){
+fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()) {
     val navController = rememberNavController()
 
-    // Set up the navigation host
     NavHost(navController = navController, startDestination = Screen.RecipeSearchScreen.route) {
         composable(Screen.RecipeSearchScreen.route) {
             RecipeSearchScreen(navController, viewModel)
         }
+
     }
 }
 

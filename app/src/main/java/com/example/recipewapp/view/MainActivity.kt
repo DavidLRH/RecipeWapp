@@ -3,6 +3,7 @@ package com.example.recipewapp.view
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.recipewapp.RecipeWApp
@@ -12,12 +13,10 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var viewModel: RecipeSearchViewModel
+    private val viewModel: RecipeSearchViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(RecipeSearchViewModel::class.java)
-
         enableEdgeToEdge()
         setContent {
             RecipeWappTheme {
