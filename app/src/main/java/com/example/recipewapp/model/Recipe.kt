@@ -12,6 +12,9 @@ data class Recipe(
     val title: String,
     @ColumnInfo(name = "image")
     val image: String,
+    @ColumnInfo(name = "is_favorite")
+    val isFavorite: Boolean = false,
     @ColumnInfo(name = "new_column_name")
     val newColumnName: String = ""
+
 )

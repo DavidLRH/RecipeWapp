@@ -15,4 +15,12 @@ class RecipeController @Inject constructor(
     suspend fun getCachedRecipes(): List<Recipe> {
         return repository.getCachedRecipes()
     }
+
+    suspend fun updateFavoriteStatus(recipeId: Long, isFavorite: Boolean) {
+        repository.updateFavoriteStatus(recipeId, isFavorite)
+    }
+
+    suspend fun getFavoriteRecipes(): List<Recipe> {
+        return repository.getFavoriteRecipes()
+    }
 }

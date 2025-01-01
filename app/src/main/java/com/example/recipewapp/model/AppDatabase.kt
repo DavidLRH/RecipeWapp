@@ -7,7 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Recipe::class], version = 2)
+
+@Database(entities = [Recipe::class], version = 3)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun recipeDao(): RecipeDao
 
@@ -15,27 +16,40 @@ abstract class AppDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
-        // Migration from version 1 to 2
+
         val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+
+                database.execSQL("ALTER TABLE recipes ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
+
+        val MIGRATION_2_3 = object : Migration(2, 3) {
             override fun migrate(database: SupportSQLiteDatabase) {
 
                 database.execSQL("ALTER TABLE recipes RENAME TO old_recipes")
 
+                database.execSQL(
+                    """
+                    CREATE TABLE recipes (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        title TEXT NOT NULL DEFAULT 'undefined',
+                        image TEXT NOT NULL DEFAULT 'undefined',
+                        new_column_name TEXT NOT NULL DEFAULT '',
+                        is_favorite INTEGER NOT NULL DEFAULT 0
+                    )
+                    """
+                )
 
-                database.execSQL("""
-            CREATE TABLE recipes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                title TEXT NOT NULL DEFAULT 'undefined',
-                image TEXT NOT NULL DEFAULT 'undefined',
-                new_column_name TEXT NOT NULL DEFAULT ''
-            )
-        """)
 
+                database.execSQL(
+                    """
+                    INSERT INTO recipes (id, title, image)
+                    SELECT idMeal, name, thumbnail FROM old_recipes
+                    """
+                )
 
-                database.execSQL("""
-            INSERT INTO recipes (id, title, image)
-            SELECT idMeal, name, thumbnail FROM old_recipes
-        """)
 
                 database.execSQL("DROP TABLE old_recipes")
             }
@@ -48,7 +62,7 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "recipe_database"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                 INSTANCE = instance
                 instance

@@ -1,5 +1,6 @@
 package com.example.recipewapp.view
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.room.util.foreignKeyCheck
@@ -21,19 +22,39 @@ class RecipeSearchViewModel @Inject constructor(
     var recipes: StateFlow<List<Recipe>> = _recipes
 
 
+    private val _favorites = MutableStateFlow<List<Recipe>>(emptyList())
+    val favorites: StateFlow<List<Recipe>> = _favorites
+
+
     fun fetchRecipes(ingredient: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                _recipes.value = recipeController.getRecipes(ingredient)
+                val fetchedRecipes = recipeController.getRecipes(ingredient)
+                Log.d("RecipeSearchViewModel", "Fetched Recipes: $fetchedRecipes") // Log recipes
+                _recipes.value = fetchedRecipes
             } catch (e: Exception) {
-                println("error fetching recipes: " + e.message)
+                Log.e("RecipeSearchViewModel", "Error fetching recipes", e)
             }
         }
     }
 
-    fun fetchFavourites() {
-        TODO("Not yet implemented")
+    fun toggleFavoriteStatus(recipe: Recipe) {
+        viewModelScope.launch(Dispatchers.IO) {
+            recipeController.updateFavoriteStatus(recipe.id, !recipe.isFavorite)
+
+
+            val updatedRecipes = recipeController.getRecipes("")
+            _recipes.value = updatedRecipes
+            _favorites.value = recipeController.getFavoriteRecipes()
+        }
     }
+
+    fun fetchFavourites() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _recipes.value = recipeController.getFavoriteRecipes()
+        }
+    }
+
 
     init {
         println("viewmodel started")

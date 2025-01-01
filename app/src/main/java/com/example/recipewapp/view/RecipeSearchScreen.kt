@@ -18,11 +18,16 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -50,6 +55,7 @@ import com.example.recipewapp.model.Recipe
 @Composable
 fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchViewModel) {
     val recipes by viewModel.recipes.collectAsState()
+
     val maxIngredients = 5
     var ingredientsList by remember { mutableStateOf(listOf("", "")) }
 
@@ -143,7 +149,7 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
                 userScrollEnabled = true
             ) {
                 items(recipes) { recipe ->
-                    RecipeItem(recipe)
+                    RecipeItem(recipe = recipe, onToggleFavorite = { viewModel.toggleFavoriteStatus(it) })
                 }
             }
 
@@ -186,7 +192,7 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
 
 
 @Composable
-fun RecipeItem(recipe: Recipe) {
+fun RecipeItem(recipe: Recipe, onToggleFavorite: (Recipe) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -194,7 +200,19 @@ fun RecipeItem(recipe: Recipe) {
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = recipe.title, style = MaterialTheme.typography.titleMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(text = recipe.title, style = MaterialTheme.typography.titleMedium)
+                IconButton(onClick = { onToggleFavorite(recipe) }) {
+                    Icon(
+                        imageVector = if (recipe.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
+                        contentDescription = if (recipe.isFavorite) "Remove from Favorites" else "Add to Favorites",
+                        tint = if (recipe.isFavorite) Color.Yellow else Color.Gray
+                    )
+                }
+            }
             Spacer(modifier = Modifier.height(8.dp))
             Image(
                 painter = rememberAsyncImagePainter(recipe.image),
