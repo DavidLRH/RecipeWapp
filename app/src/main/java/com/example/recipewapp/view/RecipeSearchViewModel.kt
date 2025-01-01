@@ -19,18 +19,16 @@ class RecipeSearchViewModel @Inject constructor(
     private val recipeController: RecipeController,
 ) : ViewModel() {
     private var _recipes = MutableStateFlow<List<Recipe>>(emptyList())
-    var recipes: StateFlow<List<Recipe>> = _recipes
-
+    val recipes: StateFlow<List<Recipe>> = _recipes
 
     private val _favorites = MutableStateFlow<List<Recipe>>(emptyList())
     val favorites: StateFlow<List<Recipe>> = _favorites
-
 
     fun fetchRecipes(ingredient: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val fetchedRecipes = recipeController.getRecipes(ingredient)
-                Log.d("RecipeSearchViewModel", "Fetched Recipes: $fetchedRecipes") // Log recipes
+                Log.d("RecipeSearchViewModel", "Fetched Recipes: $fetchedRecipes")
                 _recipes.value = fetchedRecipes
             } catch (e: Exception) {
                 Log.e("RecipeSearchViewModel", "Error fetching recipes", e)
@@ -40,23 +38,31 @@ class RecipeSearchViewModel @Inject constructor(
 
     fun toggleFavoriteStatus(recipe: Recipe) {
         viewModelScope.launch(Dispatchers.IO) {
-            recipeController.updateFavoriteStatus(recipe.id, !recipe.isFavorite)
+            try {
+                recipeController.updateFavoriteStatus(recipe.id, !recipe.isFavorite)
 
+                _recipes.value = _recipes.value.map {
+                    if (it.id == recipe.id) it.copy(isFavorite = !recipe.isFavorite) else it
+                }
 
-            val updatedRecipes = recipeController.getRecipes("")
-            _recipes.value = updatedRecipes
-            _favorites.value = recipeController.getFavoriteRecipes()
+                _favorites.value = recipeController.getFavoriteRecipes()
+            } catch (e: Exception) {
+                Log.e("RecipeSearchViewModel", "Error toggling favorite status", e)
+            }
         }
     }
 
     fun fetchFavourites() {
         viewModelScope.launch(Dispatchers.IO) {
-            _recipes.value = recipeController.getFavoriteRecipes()
+            try {
+                _favorites.value = recipeController.getFavoriteRecipes()
+            } catch (e: Exception) {
+                Log.e("RecipeSearchViewModel", "Error fetching favorites", e)
+            }
         }
     }
 
-
     init {
-        println("viewmodel started")
+        Log.d("RecipeSearchViewModel", "ViewModel initialized")
     }
 }
