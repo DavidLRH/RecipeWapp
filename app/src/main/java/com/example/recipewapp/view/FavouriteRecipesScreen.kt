@@ -27,10 +27,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun FavouriteRecipesScreen(navController: NavController, viewModel: RecipeSearchViewModel) {
-
+fun FavouriteRecipesScreen(
+    navController: NavController,
+    viewModel: RecipeSearchViewModel = androidx.hilt.navigation.compose.hiltViewModel()
+) {
     val favorites = viewModel.favorites.collectAsState().value
-
 
     Scaffold {
         Column(
@@ -38,7 +39,6 @@ fun FavouriteRecipesScreen(navController: NavController, viewModel: RecipeSearch
                 .fillMaxWidth()
                 .padding(it)
         ) {
-
             Spacer(modifier = Modifier.height(4.dp))
             Box(
                 modifier = Modifier
@@ -54,7 +54,6 @@ fun FavouriteRecipesScreen(navController: NavController, viewModel: RecipeSearch
                 )
             }
 
-
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -65,10 +64,13 @@ fun FavouriteRecipesScreen(navController: NavController, viewModel: RecipeSearch
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(favorites) { recipe ->
-                    RecipeItem(recipe = recipe, onToggleFavorite = { viewModel.toggleFavoriteStatus(it) })
+                    RecipeItem(
+                        recipe = recipe,
+                        onToggleFavorite = { viewModel.toggleFavoriteStatus(it) },
+                        navController = navController
+                    )
                 }
             }
-
 
             Row(
                 modifier = Modifier
@@ -92,3 +94,4 @@ fun FavouriteRecipesScreen(navController: NavController, viewModel: RecipeSearch
         }
     }
 }
+

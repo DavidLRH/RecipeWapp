@@ -8,6 +8,7 @@ import com.example.recipewapp.utils.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
+import com.example.recipewapp.model.RecipeDetailsResponse
 
 class RecipeRepository @Inject constructor(private val recipeDao: RecipeDao) {
 
@@ -35,9 +36,14 @@ class RecipeRepository @Inject constructor(private val recipeDao: RecipeDao) {
         recipeDao.updateFavoriteStatus(recipeId, isFavorite)
     }
 
-    // New method: Get all favorite recipes
     suspend fun getFavoriteRecipes(): List<Recipe> {
         return recipeDao.getFavoriteRecipes()
+    }
+
+    suspend fun fetchRecipeDetails(recipeId: Int): RecipeDetailsResponse {
+        return withContext(Dispatchers.IO) {
+            apiService.getRecipeDetails(recipeId, "4b4fe95b701148609f5729071dc5b5c0")
+        }
     }
 
 

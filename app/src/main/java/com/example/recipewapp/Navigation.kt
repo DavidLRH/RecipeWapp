@@ -8,6 +8,8 @@ import com.example.recipewapp.view.RecipeSearchScreen
 import com.example.recipewapp.view.RecipeSearchViewModel
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.recipewapp.view.FavouriteRecipesScreen
+import com.example.recipewapp.view.RecipeDetailsScreen
+
 
 @Composable
 fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()) {
@@ -20,6 +22,11 @@ fun RecipeWApp(viewModel: RecipeSearchViewModel = hiltViewModel()) {
         composable(Screen.FavouriteRecipesScreen.route) {
             FavouriteRecipesScreen(navController, viewModel)
         }
+        composable("recipeDetails/{recipeId}") { backStackEntry ->
+            val recipeId = backStackEntry.arguments?.getString("recipeId")?.toInt() ?: 0
+            RecipeDetailsScreen(recipeId = recipeId)
+        }
+
     }
 }
 

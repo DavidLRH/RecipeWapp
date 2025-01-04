@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.clickable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
@@ -55,7 +56,6 @@ import com.example.recipewapp.model.Recipe
 @Composable
 fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchViewModel) {
     val recipes by viewModel.recipes.collectAsState()
-
     val maxIngredients = 5
     var ingredientsList by remember { mutableStateOf(listOf("", "")) }
 
@@ -65,15 +65,14 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
                 .fillMaxSize()
                 .padding(it)
         ) {
-            Spacer(modifier = Modifier.height(4.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
-                    .wrapContentWidth(Alignment.CenterHorizontally)
+                    .padding(16.dp),
+                contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = "Search recipes",
+                    text = "Search Recipes",
                     fontSize = 32.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color(0, 13, 45, 255)
@@ -83,13 +82,12 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp)
+                    .padding(horizontal = 16.dp)
             ) {
                 ingredientsList.forEachIndexed { index, ingredient ->
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         TextField(
                             value = ingredient,
@@ -103,11 +101,13 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         if (ingredientsList.size > 1) {
-                            Button(onClick = {
-                                ingredientsList = ingredientsList.toMutableList().apply {
-                                    removeAt(index)
+                            Button(
+                                onClick = {
+                                    ingredientsList = ingredientsList.toMutableList().apply {
+                                        removeAt(index)
+                                    }
                                 }
-                            }) {
+                            ) {
                                 Text("-")
                             }
                         }
@@ -121,9 +121,7 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
                                 add("")
                             }
                         },
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                            .fillMaxWidth()
+                        modifier = Modifier.padding(vertical = 8.dp)
                     ) {
                         Text("+ Add Ingredient")
                     }
@@ -133,70 +131,63 @@ fun RecipeSearchScreen(navController: NavController, viewModel: RecipeSearchView
             HorizontalDivider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(4.dp),
-                thickness = 2.dp,
-                color = Color(0, 13, 45, 255)
+                    .padding(16.dp),
+                thickness = 1.dp,
+                color = Color.Gray
             )
 
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .border(1.dp, color = Color.Magenta)
-                    .padding(4.dp),
-                contentPadding = PaddingValues(16.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                userScrollEnabled = true
+                    .padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(recipes) { recipe ->
-                    RecipeItem(recipe = recipe, onToggleFavorite = { viewModel.toggleFavoriteStatus(it) })
+                    RecipeItem(
+                        recipe = recipe,
+                        onToggleFavorite = { viewModel.toggleFavoriteStatus(it) },
+                        navController = navController
+                    )
                 }
             }
 
-            Row(modifier = Modifier
-                .fillMaxWidth()
-                .height(64.dp)
-                .padding(4.dp),
-                horizontalArrangement = Arrangement.Center) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Button(
                     onClick = {
-                        val ingredientsString =
-                            ingredientsList.filter { it.isNotBlank() }.joinToString(",")
+                        val ingredientsString = ingredientsList.filter { it.isNotBlank() }.joinToString(",")
                         viewModel.fetchRecipes(ingredientsString)
                     },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-
-                    ) {
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text("Search Recipes")
                 }
-
+                Spacer(modifier = Modifier.width(16.dp))
                 Button(
-                    onClick = { navController.navigate(route = "favourites") },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth()
-                        .weight(1f),
-
-                    ) {
+                    onClick = { navController.navigate("favourites") },
+                    modifier = Modifier.weight(1f)
+                ) {
                     Text("View Favourites")
                 }
             }
-
-            Spacer(modifier = Modifier.height(4.dp))
         }
     }
 }
 
 
+
 @Composable
-fun RecipeItem(recipe: Recipe, onToggleFavorite: (Recipe) -> Unit) {
+fun RecipeItem(recipe: Recipe, onToggleFavorite: (Recipe) -> Unit, navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { navController.navigate("recipeDetails/${recipe.id}") },
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -204,7 +195,11 @@ fun RecipeItem(recipe: Recipe, onToggleFavorite: (Recipe) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = recipe.title, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    text = recipe.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold
+                )
                 IconButton(onClick = { onToggleFavorite(recipe) }) {
                     Icon(
                         imageVector = if (recipe.isFavorite) Icons.Filled.Star else Icons.Outlined.Star,
