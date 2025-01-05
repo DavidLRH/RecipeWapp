@@ -33,6 +33,10 @@ class RecipeSearchViewModel @Inject constructor(
     private val _recipeDetails = MutableLiveData<RecipeDetailsResponse?>()
     val recipeDetails: LiveData<RecipeDetailsResponse?> = _recipeDetails
 
+    init {
+        fetchFavourites()
+    }
+
     fun fetchRecipes(ingredient: String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -73,7 +77,7 @@ class RecipeSearchViewModel @Inject constructor(
         }
     }
 
-    fun fetchFavourites() {
+    private fun fetchFavourites() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 _favorites.value = recipeController.getFavoriteRecipes()
