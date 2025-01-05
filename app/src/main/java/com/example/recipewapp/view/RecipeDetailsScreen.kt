@@ -101,7 +101,7 @@ fun RecipeDetailsScreen(recipeId: Int, viewModel: RecipeDetailsViewModel = hiltV
                     width = 2.dp,
                     color = MaterialTheme.colorScheme.primary,
                     shape = MaterialTheme.shapes.medium
-                ) // Add a border
+                )
                 .padding(16.dp),
             contentAlignment = Alignment.Center
         ) {
