@@ -11,7 +11,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.font.FontWeight
-import com.example.recipewapp.view.RecipeDetailsViewModel
+
 
 @Composable
 fun RecipeDetailsScreen(recipeId: Int, viewModel: RecipeDetailsViewModel = hiltViewModel()) {

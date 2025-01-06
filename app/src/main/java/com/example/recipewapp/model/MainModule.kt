@@ -34,7 +34,7 @@ object MainModule {
     @Singleton
     fun provideDatabase(app: Application): AppDatabase {
         return Room.databaseBuilder(app, AppDatabase::class.java, "recipe_database")
-            .fallbackToDestructiveMigration()  // Handle database migrations (if any)
+            .fallbackToDestructiveMigration()
             .build()
     }
 }

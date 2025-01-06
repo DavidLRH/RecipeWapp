@@ -20,6 +20,4 @@ interface RecipeDao {
     @Query("SELECT * FROM recipes WHERE is_favorite = 1")
     suspend fun getFavoriteRecipes(): List<Recipe>
 
-
-
 }

@@ -5,7 +5,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import com.example.recipewapp.RecipeWApp
 import com.example.recipewapp.ui.theme.RecipeWappTheme
 import dagger.hilt.android.AndroidEntryPoint
