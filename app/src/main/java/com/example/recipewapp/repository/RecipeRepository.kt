@@ -16,7 +16,7 @@ class RecipeRepository @Inject constructor(private val recipeDao: RecipeDao) {
 
     suspend fun fetchRecipes(ingredients: String): List<Recipe> {
         return withContext(Dispatchers.IO) {
-            val response = apiService.getRecipes("$ingredients,", "4b4fe95b701148609f5729071dc5b5c0")
+            val response = apiService.getRecipes("$ingredients,", "klistra in ditt personliga api-key")
 
 
             val recipes = response.results.map {
@@ -42,7 +42,7 @@ class RecipeRepository @Inject constructor(private val recipeDao: RecipeDao) {
 
     suspend fun fetchRecipeDetails(recipeId: Int): RecipeDetailsResponse {
         return withContext(Dispatchers.IO) {
-            apiService.getRecipeDetails(recipeId, "4b4fe95b701148609f5729071dc5b5c0")
+            apiService.getRecipeDetails(recipeId, "klistra in ditt personliga api-key")
         }
     }
 
